@@ -5,6 +5,7 @@
 
 Adafruit_MPU6050 mpu;
 Adafruit_MPU6050 mpu2;
+Adafruit_MPU6050 mpu3;
 
 // This program assumes the MPU6050 is connected to the Wire2 I2C
 // pins on the Teensy (SCL to pin 24 and SDA to pin 25).
@@ -37,6 +38,16 @@ void setup()
   }
   Serial.println("Second MPU6050 Found!");
 
+  if (!mpu3.begin(0x69, &Wire, 3L))
+  {
+    Serial.println("Failed to find third MPU6050 chip");
+    while (1)
+    {
+      delay(10);
+    }
+  }
+  Serial.println("Third MPU6050 Found!");
+
   // setupt motion detection
   mpu.setHighPassFilter(MPU6050_HIGHPASS_0_63_HZ);
   mpu.setMotionDetectionThreshold(1);
@@ -50,6 +61,12 @@ void setup()
   mpu2.setInterruptPinLatch(true); // Keep it latched.  Will turn off when reinitialized.
   mpu2.setInterruptPinPolarity(true);
   mpu2.setMotionInterrupt(true);
+  mpu3.setHighPassFilter(MPU6050_HIGHPASS_0_63_HZ);
+  mpu3.setMotionDetectionThreshold(1);
+  mpu3.setMotionDetectionDuration(20);
+  mpu3.setInterruptPinLatch(true); // Keep it latched.  Will turn off when reinitialized.
+  mpu3.setInterruptPinPolarity(true);
+  mpu3.setMotionInterrupt(true);
 
   Serial.println("");
   delay(1000);
@@ -82,8 +99,6 @@ void loop()
   Serial.print("GyroZ1:");
   Serial.print(g.gyro.z);
   Serial.println("");
-  Serial.println("");
-  Serial.println("");
 
   mpu2.getEvent(&a, &g, &temp);
   Serial.print("AccelX2:");
@@ -104,6 +119,28 @@ void loop()
   Serial.print("GyroZ2:");
   Serial.print(g.gyro.z);
   Serial.println("");
+
+  mpu3.getEvent(&a, &g, &temp);
+  Serial.print("AccelX3:");
+  Serial.print(a.acceleration.x);
+  Serial.print(",");
+  Serial.print("AccelY3:");
+  Serial.print(a.acceleration.y);
+  Serial.print(",");
+  Serial.print("AccelZ3:");
+  Serial.print(a.acceleration.z);
+  Serial.print(", ");
+  Serial.print("GyroX3:");
+  Serial.print(g.gyro.x);
+  Serial.print(",");
+  Serial.print("GyroY3:");
+  Serial.print(g.gyro.y);
+  Serial.print(",");
+  Serial.print("GyroZ3:");
+  Serial.print(g.gyro.z);
+  Serial.println("");
+
+  Serial.println("--------------------");
 
   delay(1000);
 }
